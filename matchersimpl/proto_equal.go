@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/onsi/gomega/format"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -28,9 +29,15 @@ func (matcher *ProtoEqualMatcher) Match(actual interface{}) (success bool, err e
 }
 
 func (matcher *ProtoEqualMatcher) FailureMessage(actual interface{}) (message string) {
+	if pactual, ok := actual.(proto.Message); ok {
+		return format.Message(protojson.Format(pactual), "to equal", protojson.Format(matcher.Expected))
+	}
 	return format.Message(actual, "to equal", matcher.Expected)
 }
 
 func (matcher *ProtoEqualMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+	if pactual, ok := actual.(proto.Message); ok {
+		return format.Message(protojson.Format(pactual), "not to equal", protojson.Format(matcher.Expected))
+	}
 	return format.Message(actual, "not to equal", matcher.Expected)
 }
