@@ -1,9 +1,11 @@
 package matchersimpl
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 func TestProtoEqualMatcher_Match(t *testing.T) {
@@ -21,10 +23,25 @@ func TestProtoEqualMatcher_Match(t *testing.T) {
 }
 
 func TestProtoEqualMatcher_FailureMessage(t *testing.T) {
-	gotMessage := (&ProtoEqualMatcher{nil}).FailureMessage("string")
-	assert.Contains(t, gotMessage, "to equal")
-	assert.Contains(t, gotMessage, "string")
-	assert.Contains(t, gotMessage, "nil")
+	t.Run("when actual is a proto.Message", func(t *testing.T) {
+		gotMessage := (&ProtoEqualMatcher{
+			Expected: &helloworld.HelloReply{
+				Message: "message 1",
+			},
+		}).FailureMessage(&helloworld.HelloReply{
+			Message: "message 2",
+		})
+		fmt.Println(gotMessage)
+		assert.Contains(t, gotMessage, "to equal")
+		assert.Contains(t, gotMessage, "message 1")
+		assert.Contains(t, gotMessage, "message 2")
+	})
+	t.Run("when actual is NOT a proto.Message", func(t *testing.T) {
+		gotMessage := (&ProtoEqualMatcher{nil}).FailureMessage("string")
+		assert.Contains(t, gotMessage, "to equal")
+		assert.Contains(t, gotMessage, "string")
+		assert.Contains(t, gotMessage, "nil")
+	})
 }
 
 func TestProtoEqualMatcher_NegatedFailureMessage(t *testing.T) {
