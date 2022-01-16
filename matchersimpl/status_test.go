@@ -1,4 +1,4 @@
-//go:generate go run github.com/golang/mock/mockgen -package matchersimpl -imports status=google.golang.org/grpc/status -destination mocks_test.go github.com/jamillosantos/gomega-grpc/matchersimpl StatusMatcher,ErrorInfoMatcher
+//go:generate go run github.com/golang/mock/mockgen -package matchersimpl -imports status=google.golang.org/grpc/status -destination mocks_test.go github.com/jamillosantos/gomega-grpc/matchersimpl StatusMatcher,ErrorInfoMatcher,BadRequestMatcher
 //go:generate go run ../tools/replace_internal_status/main.go -- mocks_test.go
 //go:generate go run github.com/golang/mock/mockgen -package matchersimpl -destination gomega_matcher_mock_test.go github.com/onsi/gomega/types GomegaMatcher
 
