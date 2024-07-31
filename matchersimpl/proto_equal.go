@@ -3,6 +3,7 @@ package matchersimpl
 import (
 	"errors"
 
+	"github.com/andreyvit/diff"
 	"github.com/onsi/gomega/format"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -30,7 +31,8 @@ func (matcher *ProtoEqualMatcher) Match(actual interface{}) (success bool, err e
 
 func (matcher *ProtoEqualMatcher) FailureMessage(actual interface{}) (message string) {
 	if pactual, ok := actual.(proto.Message); ok {
-		return format.Message(protojson.Format(pactual), "to equal", protojson.Format(matcher.Expected))
+		return format.Message(protojson.Format(pactual), "to equal", protojson.Format(matcher.Expected)) +
+			"\n\nDiff:\n" + diff.LineDiff(protojson.Format(matcher.Expected), protojson.Format(pactual))
 	}
 	return format.Message(actual, "to equal", matcher.Expected)
 }

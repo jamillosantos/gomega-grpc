@@ -145,10 +145,6 @@ func TestGRPCBadRequestFieldViolation_Match(t *testing.T) {
 		Field:       "another field",
 		Description: "description",
 	}
-	violations := []*errdetails.BadRequest_FieldViolation{
-		&anotherViolation,
-		&violation,
-	}
 
 	tests := []struct {
 		name   string
@@ -156,20 +152,23 @@ func TestGRPCBadRequestFieldViolation_Match(t *testing.T) {
 		want   bool
 	}{
 		{"should match when given a BadRequest", &errdetails.BadRequest{
-			FieldViolations: violations,
+			FieldViolations: []*errdetails.BadRequest_FieldViolation{
+				&anotherViolation,
+				&violation,
+			},
 		}, true},
 		{"should not match when given a BadRequest", &errdetails.BadRequest{
 			FieldViolations: []*errdetails.BadRequest_FieldViolation{
 				&anotherViolation,
 			},
-		}, true},
+		}, false},
 		{"should not match when there are no BadRequest", &errdetails.BadRequest{
 			FieldViolations: nil,
 		}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &GRPCBadRequestFieldViolation{
+			m := GRPCBadRequestFieldViolation{
 				Field:       "field",
 				Description: "description",
 			}
